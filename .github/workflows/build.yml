@@ -9,11 +9,11 @@ jobs:
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.15.2
+          go-version: stable
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -25,23 +25,24 @@ jobs:
         run: go test -race -coverprofile=coverage.txt -covermode=atomic ./...
       - name: Upload coverage
         uses: codecov/codecov-action@v1
-  build_1_9_7:
-    name: Build with Go 1.9.7
+  build_1_12:
+    name: Build with Go 1.12.17
     runs-on: ubuntu-latest
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
     steps:
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.9.7
+          go-version: '1.12.17'
       - name: Git checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: gopath/src/github.com/nicksnyder/go-i18n
       - name: Build and test
         working-directory: gopath/src/github.com/nicksnyder/go-i18n/v2
         env:
             GOPATH: ${{ github.workspace }}/gopath
+            GO111MODULE: on
         run: |
-          go get -t ./...
+          go get ./...
           go test -race ./...
